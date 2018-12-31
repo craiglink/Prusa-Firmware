@@ -123,10 +123,9 @@ static void lcd_settings_menu_back();
 #endif //LINEARITY_CORRECTION
 static void lcd_control_temperature_menu();
 static void lcd_control_temperature_preheat_pla_settings_menu();
-static void lcd_control_temperature_preheat_abs_settings_menu();
-static void lcd_control_motion_menu();
-static void lcd_control_volumetric_menu();
-static void lcd_settings_linearity_correction_menu_save();
+//static void lcd_control_temperature_preheat_abs_settings_menu();
+//static void lcd_control_motion_menu();
+//static void lcd_control_volumetric_menu();
 static void prusa_stat_printerstatus(int _status);
 static void prusa_stat_farm_number();
 static void prusa_stat_temperatures();
@@ -146,6 +145,7 @@ static void lcd_selftest_v();
 static void reset_crash_det(unsigned char axis);
 static bool lcd_selfcheck_axis_sg(unsigned char axis);
 static bool lcd_selfcheck_axis(int _axis, int _travel);
+static void lcd_settings_linearity_correction_menu_save();
 #else
 static bool lcd_selfcheck_endstops();
 static bool lcd_selfcheck_axis(int _axis, int _travel);
@@ -548,6 +548,7 @@ void lcdui_print_extruder(void)
 void lcdui_print_farm(void)
 {
 	int chars = lcd_printf_P(_N(" F0  "));
+  chars = chars; // prevent unused warning
 //	lcd_space(5 - chars);
 /*
 	// Farm number display
@@ -3076,7 +3077,7 @@ bool lcd_calibrate_z_end_stop_manual(bool only_z)
 
     // Until confirmed by the confirmation dialog.
     for (;;) {
-        unsigned long previous_millis_cmd = millis();
+//        unsigned long previous_millis_cmd = millis();
         const char   *msg                 = only_z ? _i("Calibrating Z. Rotate the knob to move the Z carriage up to the end stoppers. Click when done.") : _i("Calibrating XYZ. Rotate the knob to move the Z carriage up to the end stoppers. Click when done.");////MSG_MOVE_CARRIAGE_TO_THE_TOP c=20 r=8////MSG_MOVE_CARRIAGE_TO_THE_TOP_Z c=20 r=8
         const char   *msg_next            = lcd_display_message_fullscreen_P(msg);
         const bool    multi_screen        = msg_next != NULL;
@@ -3091,7 +3092,7 @@ bool lcd_calibrate_z_end_stop_manual(bool only_z)
             manage_inactivity(true);
             if (abs(lcd_encoder_diff) >= ENCODER_PULSES_PER_STEP) {
                 delay(50);
-                previous_millis_cmd = millis();
+//                previous_millis_cmd = millis();
                 lcd_encoder += abs(lcd_encoder_diff / ENCODER_PULSES_PER_STEP);
                 lcd_encoder_diff = 0;
                 if (! planner_queue_full()) {
@@ -4902,9 +4903,9 @@ static void lcd_ustep_linearity_menu_save()
 #endif //TMC2130
 
 
+#ifdef TMC2130
 static void lcd_settings_linearity_correction_menu_save()
 {
-#ifdef TMC2130
     bool changed = false;
     if (tmc2130_wave_fac[X_AXIS] < TMC2130_WAVE_FAC1000_MIN) tmc2130_wave_fac[X_AXIS] = 0;
     if (tmc2130_wave_fac[Y_AXIS] < TMC2130_WAVE_FAC1000_MIN) tmc2130_wave_fac[Y_AXIS] = 0;
@@ -4916,8 +4917,8 @@ static void lcd_settings_linearity_correction_menu_save()
     changed |= (eeprom_read_byte((uint8_t*)EEPROM_TMC2130_WAVE_E_FAC) != tmc2130_wave_fac[E_AXIS]);
     lcd_ustep_linearity_menu_save();
     if (changed) tmc2130_init();
-#endif //TMC2130
 }
+#endif //TMC2130
 
 
 static void lcd_calibration_menu()
@@ -6202,7 +6203,7 @@ bool lcd_selftest()
 	_result = lcd_selftest_manual_fan_check(0, false);
 	if (!_result)
 	{
-		const char *_err;
+		const char *_err = nullptr;
 		lcd_selftest_error(7, _err, _err); //extruder fan not spinning
 	}
 #endif //defined(TACH_0)
@@ -6217,7 +6218,7 @@ bool lcd_selftest()
 		_result = lcd_selftest_manual_fan_check(1, false);
 		if (!_result)
 		{			
-			const char *_err;
+			const char *_err = nullptr;
 			lcd_selftest_error(6, _err, _err); //print fan not spinning
 		}
 
@@ -7478,4 +7479,3 @@ void menu_lcd_lcdupdate_func(void)
 	lcd_send_status();
 	if (lcd_commands_type == LCD_COMMAND_V2_CAL) lcd_commands();
 }
-
