@@ -784,7 +784,6 @@ bool xyzcal_find_bed_induction_sensor_point_xy(void)
 	xyzcal_lineXYZ_to(x, y, z, 200, 0);
 	if (xyzcal_searchZ())
 	{
-		int16_t z = _Z;
 		xyzcal_lineXYZ_to(x, y, z, 200, 0);
 		if (xyzcal_scan_and_process())
 		{

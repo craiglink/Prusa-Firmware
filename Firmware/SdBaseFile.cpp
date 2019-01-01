@@ -709,10 +709,10 @@ bool SdBaseFile::open(SdBaseFile* dirFile,
 bool SdBaseFile::open(SdBaseFile* dirFile, uint16_t index, uint8_t oflag) {
   dir_t* p;
 
-  vol_ = dirFile->vol_;
-
   // error if already open
   if (isOpen() || !dirFile) goto fail;
+
+  vol_ = dirFile->vol_;
 
   // don't open existing file if O_EXCL - user call error
   if (oflag & O_EXCL) goto fail;
@@ -770,7 +770,7 @@ bool SdBaseFile::openCachedEntry(uint8_t dirIndex, uint8_t oflag) {
   curCluster_ = 0;
   curPosition_ = 0;
   if ((oflag & O_TRUNC) && !truncate(0)) return false;
-  return oflag & O_AT_END ? seekEnd(0) : true;
+  return (oflag & O_AT_END) ? seekEnd(0) : true;
 
  fail:
   type_ = FAT_FILE_TYPE_CLOSED;
@@ -1212,7 +1212,6 @@ bool SdBaseFile::remove() {
 
   // write entry to SD
   return vol_->cacheFlush();
-  return true;
 
  fail:
   return false;
@@ -1641,7 +1640,7 @@ bool SdBaseFile::timestamp(uint8_t flags, uint16_t year, uint8_t month,
     d->creationDate = dirDate;
     d->creationTime = dirTime;
     // seems to be units of 1/100 second not 1/10 as Microsoft states
-    d->creationTimeTenths = second & 1 ? 100 : 0;
+    d->creationTimeTenths = (second & 1) ? 100 : 0;
   }
   if (flags & T_WRITE) {
     d->lastWriteDate = dirDate;

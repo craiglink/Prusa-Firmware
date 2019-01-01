@@ -40,7 +40,7 @@ void swspi_init(unsigned char miso, unsigned char mosi, unsigned char sck, unsig
 
 void swspi_tx(unsigned char tx)
 {
-	int delay = 1 << (swspi_cfg & SWSPI_DEL));
+	int delay = 1 << (swspi_cfg & SWSPI_DEL);
 	if (swspi_miso == swspi_mosi) GPIO_OUT(swspi_mosi);
 	unsigned char i = 0; for (; i < 8; i++)
 	{
@@ -56,7 +56,7 @@ void swspi_tx(unsigned char tx)
 
 unsigned char swspi_rx()
 {
-	int delay = 1 << (swspi_cfg & SWSPI_DEL));
+	int delay = 1 << (swspi_cfg & SWSPI_DEL);
 	if (swspi_miso == swspi_mosi) GPIO_OUT(swspi_mosi);
 	unsigned char rx = 0;
 	unsigned char i = 0; for (; i < 8; i++)
@@ -73,7 +73,7 @@ unsigned char swspi_rx()
 
 unsigned char swspi_txrx(unsigned char tx)
 {
-	int delay = 1 << (swspi_cfg & SWSPI_DEL));
+	int delay = 1 << (swspi_cfg & SWSPI_DEL);
 	unsigned char rx = 0;
 	unsigned char i = 0; for (; i < 8; i++)
 	{

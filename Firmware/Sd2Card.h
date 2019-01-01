@@ -162,7 +162,15 @@ uint8_t const SPI_SCK_PIN = SOFT_SPI_SCK_PIN;
 class Sd2Card {
  public:
   /** Construct an instance of Sd2Card. */
-  Sd2Card() : errorCode_(SD_CARD_ERROR_INIT_NOT_CALLED), type_(0), flash_air_compatible_(false) {}
+  Sd2Card() :
+    chipSelectPin_(-1),
+    errorCode_(SD_CARD_ERROR_INIT_NOT_CALLED),
+    spiRate_(SPI_SD_INIT_RATE),
+    status_(0xFF),
+    type_(0),
+    flash_air_compatible_(false)
+    {}
+
   uint32_t cardSize();
   bool erase(uint32_t firstBlock, uint32_t lastBlock);
   bool eraseSingleBlockEnable();
