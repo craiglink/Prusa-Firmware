@@ -114,7 +114,7 @@ inline bool parse_version(const char *str, uint16_t version[4])
     return true;
 }
 
-inline bool strncmp_PP(const char *p1, const char *p2, uint8_t n)
+inline int strncmp_PP(const char *p1, const char *p2, uint8_t n)
 {
     for (; n > 0; -- n, ++ p1, ++ p2) {
 		if (pgm_read_byte(p1) >= 65 && pgm_read_byte(p1) <= 92) //p1 is upper case (p2 is always lowercase)

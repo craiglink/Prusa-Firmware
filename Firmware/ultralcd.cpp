@@ -80,7 +80,7 @@ unsigned int custom_message_state = 0;
 
 
 bool isPrintPaused = false;
-uint8_t farm_mode = 0;
+bool farm_mode = 0;
 int farm_no = 0;
 int farm_timer = 8;
 int farm_status = 0;

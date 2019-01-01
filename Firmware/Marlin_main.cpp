@@ -998,10 +998,13 @@ void setup()
 	setup_killpin();
 	setup_powerhold();
 
-	farm_mode = eeprom_read_byte((uint8_t*)EEPROM_FARM_MODE); 
+	uint8_t farm_mode_byte = eeprom_read_byte((uint8_t*)EEPROM_FARM_MODE);
 	EEPROM_read_B(EEPROM_FARM_NUMBER, &farm_no);
-	if ((farm_mode == 0xFF && farm_no == 0) || ((uint16_t)farm_no == 0xFFFF)) 
+	if ((farm_mode_byte == 0xFF && farm_no == 0) || ((uint16_t)farm_no == 0xFFFF))
 		farm_mode = false; //if farm_mode has not been stored to eeprom yet and farm number is set to zero or EEPROM is fresh, deactivate farm mode
+  else
+    farm_mode = 1 == farm_mode_byte;
+
 	if ((uint16_t)farm_no == 0xFFFF) farm_no = 0;
 	
 	selectedSerialPort = eeprom_read_byte((uint8_t*)EEPROM_SECOND_SERIAL_ACTIVE);
@@ -1305,9 +1308,13 @@ void setup()
 #if defined(Z_AXIS_ALWAYS_ON)
 	enable_z();
 #endif
-	farm_mode = eeprom_read_byte((uint8_t*)EEPROM_FARM_MODE);
+	farm_mode_byte = eeprom_read_byte((uint8_t*)EEPROM_FARM_MODE);
 	EEPROM_read_B(EEPROM_FARM_NUMBER, &farm_no);
-	if ((farm_mode == 0xFF && farm_no == 0) || (farm_no == static_cast<int>(0xFFFF))) farm_mode = false; //if farm_mode has not been stored to eeprom yet and farm number is set to zero or EEPROM is fresh, deactivate farm mode
+	if ((farm_mode_byte == 0xFF && farm_no == 0) || (farm_no == static_cast<int>(0xFFFF)))
+    farm_mode = false; //if farm_mode has not been stored to eeprom yet and farm number is set to zero or EEPROM is fresh, deactivate farm mode
+  else
+    farm_mode = 1 == farm_mode_byte;
+
 	if (farm_no == static_cast<int>(0xFFFF)) farm_no = 0;
 	if (farm_mode)
 	{
@@ -2097,9 +2104,13 @@ bool calibrate_z_auto()
 }
 #endif //TMC2130
 
-void homeaxis(int axis, uint8_t cnt, uint8_t* pstep)
+void homeaxis(int axis, uint8_t cnt, uint8_t*
+#ifdef TMC2130
+  pstep
+#endif //TMC2130
+)
 {
-	bool endstops_enabled  = enable_endstops(true); //RP: endstops should be allways enabled durring homing
+	bool endstops_enabled  = enable_endstops(true); //RP: endstops should be always enabled during homing
 #define HOMEAXIS_DO(LETTER) \
 ((LETTER##_MIN_PIN > -1 && LETTER##_HOME_DIR==-1) || (LETTER##_MAX_PIN > -1 && LETTER##_HOME_DIR==1))
     if ((axis==X_AXIS)?HOMEAXIS_DO(X):(axis==Y_AXIS)?HOMEAXIS_DO(Y):0)
@@ -2410,7 +2421,11 @@ void gcode_G28(bool home_x_axis, bool home_y_axis, bool home_z_axis) {
 	gcode_G28(home_x_axis, 0, home_y_axis, 0, home_z_axis, 0, false, true);
 }
 
-void gcode_G28(bool home_x_axis, long home_x_value, bool home_y_axis, long home_y_value, bool home_z_axis, long home_z_value, bool calib, bool without_mbl) {
+void gcode_G28(bool home_x_axis, long home_x_value, bool home_y_axis, long home_y_value, bool home_z_axis, long home_z_value, bool 
+#ifdef TMC2130
+  calib
+#endif //TMC2130
+  , bool without_mbl) {
 	st_synchronize();
 
 #if 0
