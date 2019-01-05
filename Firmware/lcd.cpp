@@ -77,11 +77,11 @@ uint8_t lcd_escape[8];
 void lcd_pulseEnable(void)
 {
 	digitalWrite(lcd_enable_pin, LOW);
-	delayMicroseconds(1);    
+    _delay_us(1);
 	digitalWrite(lcd_enable_pin, HIGH);
-	delayMicroseconds(1);    // enable pulse must be >450ns
+    _delay_us(1);    // enable pulse must be >450ns
 	digitalWrite(lcd_enable_pin, LOW);
-	delayMicroseconds(100);   // commands need > 37us to settle
+	_delay_us(50);   // commands need > 37us to settle
 }
 
 void lcd_write4bits(uint8_t value)
